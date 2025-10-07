@@ -15,10 +15,29 @@ export const WhiteCardBears: FC<WhiteCardProps> = ({
   return (
     <WhiteCard centered>
       <h2>{titleWhiteCard}</h2>
-      <div className="flex flex-col md:flex-row items-center">
-        <button onClick={() => changeBears(1)}> +1</button>
+      <div className="flex flex-col md:flex-row items-center gap-2">
+        <button
+          className="px-3 py-1 rounded-md text-white"
+          onClick={() => changeBears(1)}
+        >
+          +
+        </button>
         <span className="text-3xl mx-2 lg:mx-10">{numberOfBears}</span>
-        <button onClick={() => changeBears(-1)}>-1</button>
+        <button
+          className={
+            `px-3 py-1 rounded-md transition-colors duration-150 ` +
+            (numberOfBears <= 0
+              ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+              : "text-white")
+          }
+          disabled={numberOfBears <= 0}
+          aria-label={`Disminuir ${titleWhiteCard}`}
+          onClick={() => {
+            if (numberOfBears > 0) changeBears(-1);
+          }}
+        >
+          -
+        </button>
       </div>
     </WhiteCard>
   );
