@@ -1,14 +1,14 @@
-import { WhiteCard } from "../../components";
-import { useBearStore } from "../../stores";
+import { WhiteCard } from "../../../components";
+import { useBearStore } from "../../../stores";
 
-import { WhiteCardBears } from "../../stores";
+import { WhiteCardBears } from "../../../stores";
 
 export const BearPage = () => {
   const blackBears = useBearStore((state) => state.blackBears);
   const polarBears = useBearStore((state) => state.polarBears);
   const pandaBears = useBearStore((state) => state.pandaBears);
 
-const bears = useBearStore((state) => state.bearsList);
+  const bears = useBearStore((state) => state.bearsList);
   const doNothing = useBearStore((state) => state.doNothing);
   const addBear = useBearStore((state) => state.addBear);
   const clearBears = useBearStore((state) => state.clearBears);
@@ -64,9 +64,7 @@ const bears = useBearStore((state) => state.bearsList);
             Clear Bears
           </button>
 
-          <pre>
-            {JSON.stringify( bears, null, 2)}
-          </pre>
+          <pre>{JSON.stringify(bears, null, 2)}</pre>
         </WhiteCard>
       </div>
     </>
