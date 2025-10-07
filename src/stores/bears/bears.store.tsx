@@ -19,14 +19,28 @@ export interface BearState {
   increaseBlackBears: (by: number) => void;
   increasePolarBears: (by: number) => void;
   increasePandaBears: (by: number) => void;
+
+  computed: {
+    totalBears: number;
+  },
 }
 
-export const useBearStore = create<BearState>()((set) => ({
+export const useBearStore = create<BearState>()((set, get) => ({
   blackBears: 0,
   polarBears: 0,
   pandaBears: 0,
 
   bearsList: [{ id: 1, name: "Paddington" }],
+
+
+  // Propiedad computada 
+  // Se define dentro del store y puede acceder a otras propiedades del estado
+  // Usando la función get() proporcionada por Zustand
+  computed: {
+    get totalBears(): number {
+      return get().blackBears + get().polarBears + get().pandaBears + get().bearsList.length;
+    }
+  },
 
   doNothing: () => set((state) => ({ bearsList: state.bearsList })),
 
