@@ -1,2 +1,2 @@
 export * from "./bears/bears.store";
-export * from "./bears/components/white.card.bears";
+export * from "../pages/01-basic/bears/components/white.card.bears";
