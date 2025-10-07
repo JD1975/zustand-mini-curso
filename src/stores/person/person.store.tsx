@@ -1,5 +1,8 @@
-import { create, StateCreator } from "zustand";
+import { create, type StateCreator } from "zustand";
+// import { customSessionStorage } from "./Storages/storage.person";
 import { persist } from "zustand/middleware";
+import { firebaseStorage } from "./Firebase/firebase.person";
+
 
 interface PersonState {
   firstName: string;
@@ -33,5 +36,8 @@ guardar el estado de la persona entre recargas de página
 */
 
 export const usePersonStore = create<PersonState & PersonActions>()(
-  persist(storeApi, { name: "personStorage" })
+  persist(storeApi, {
+    name: "personStorage",
+    storage: firebaseStorage,
+  })
 );
