@@ -17,13 +17,6 @@ export const WhiteCardBears: FC<WhiteCardProps> = ({
       <h2>{titleWhiteCard}</h2>
       <div className="flex flex-col md:flex-row items-center gap-2">
         <button
-          className="px-3 py-1 rounded-md text-white"
-          onClick={() => changeBears(1)}
-        >
-          +
-        </button>
-        <span className="text-3xl mx-2 lg:mx-10">{numberOfBears}</span>
-        <button
           className={
             `px-3 py-1 rounded-md transition-colors duration-150 ` +
             (numberOfBears <= 0
@@ -37,6 +30,15 @@ export const WhiteCardBears: FC<WhiteCardProps> = ({
           }}
         >
           -
+        </button>
+
+        <span className="text-3xl mx-2 lg:mx-10">{numberOfBears}</span>
+
+        <button
+          className="px-3 py-1 rounded-md text-white"
+          onClick={() => changeBears(1)}
+        >
+          +
         </button>
       </div>
     </WhiteCard>
