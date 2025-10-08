@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface Bear {
   id: number;
@@ -20,47 +21,70 @@ export interface BearState {
   increasePolarBears: (by: number) => void;
   increasePandaBears: (by: number) => void;
 
-  computed: {
-    totalBears: number;
-  },
+  // No funciona como se espera la propiedad computada dentro de un objeto
+  // Por lo que se define como una función normal
+  totalBears: () => number;
+  // computed: {
+  //   totalBears: number;
 }
 
-export const useBearStore = create<BearState>()((set, get) => ({
-  blackBears: 0,
-  polarBears: 0,
-  pandaBears: 0,
+export const useBearStore = create<BearState>()(
+  persist(
+    (set, get) => ({
+      blackBears: 0,
+      polarBears: 0,
+      pandaBears: 0,
 
-  bearsList: [{ id: 1, name: "Paddington" }],
+      bearsList: [{ id: 1, name: "Paddington" }],
 
+      // Propiedad computada
+      // Se define dentro del store y puede acceder a otras propiedades del estado
+      // Usando la función get() proporcionada por Zustand
+      // computed: {
+      //   get totalBears(): number {
+      //     return (
+      //       get().blackBears +
+      //       get().polarBears +
+      //       get().pandaBears +
+      //       get().bearsList.length
+      //     );
+      //   },
+      // },
 
-  // Propiedad computada 
-  // Se define dentro del store y puede acceder a otras propiedades del estado
-  // Usando la función get() proporcionada por Zustand
-  computed: {
-    get totalBears(): number {
-      return get().blackBears + get().polarBears + get().pandaBears + get().bearsList.length;
+      totalBears: () => {
+        return (
+          get().blackBears +
+          get().polarBears +
+          get().pandaBears +
+          get().bearsList.length
+        );
+      },
+
+      doNothing: () => set((state) => ({ bearsList: state.bearsList })),
+
+      addBear: () =>
+        set((state) => ({
+          bearsList: [
+            ...state.bearsList,
+            {
+              id: state.bearsList.length + 1,
+              name: `Oso #${state.bearsList.length + 1}`,
+            },
+          ],
+        })),
+
+      clearBears: () => set({ bearsList: [] }),
+
+      increaseBlackBears: (by: number) =>
+        set((state) => ({ blackBears: state.blackBears + by })),
+      increasePolarBears: (by: number) =>
+        set((state) => ({ polarBears: state.polarBears + by })),
+      increasePandaBears: (by: number) =>
+        set((state) => ({ pandaBears: state.pandaBears + by })),
+    }),
+    {
+      name: "bears-storage", // Nombre de la clave en el almacenamiento
+      // storage: customSessionStorage, // Almacenamiento personalizado (opcional)
     }
-  },
-
-  doNothing: () => set((state) => ({ bearsList: state.bearsList })),
-
-  addBear: () =>
-    set((state) => ({
-      bearsList: [
-        ...state.bearsList,
-        {
-          id: state.bearsList.length + 1,
-          name: `Oso #${state.bearsList.length + 1}`,
-        },
-      ],
-    })),
-
-  clearBears: () => set({ bearsList: [] }),
-
-  increaseBlackBears: (by: number) =>
-    set((state) => ({ blackBears: state.blackBears + by })),
-  increasePolarBears: (by: number) =>
-    set((state) => ({ polarBears: state.polarBears + by })),
-  increasePandaBears: (by: number) =>
-    set((state) => ({ pandaBears: state.pandaBears + by })),
-}));
+  )
+);
