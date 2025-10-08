@@ -1,8 +1,7 @@
 import { create, type StateCreator } from "zustand";
 // import { customSessionStorage } from "./Storages/storage.person";
-import { persist } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 import { firebaseStorage } from "./Firebase/firebase.person";
-
 
 interface PersonState {
   firstName: string;
@@ -20,12 +19,17 @@ Separa la definición del estado y las acciones en una constante 'storeApi'
 Esto mejora la legibilidad y el mantenimiento del código 
 */
 
-const storeApi: StateCreator<PersonActions & PersonState> = (set) => ({
+const storeApi: StateCreator<
+  PersonActions & PersonState,
+  [["zustand/devtools", never]]
+> = (set) => ({
   firstName: "",
   lastName: "",
 
-  setFirstName: (value: string) => set((state) => ({ firstName: value })),
-  setLastName: (value: string) => set((state) => ({ lastName: value })),
+  setFirstName: (value: string) =>
+    set({ firstName: value }, false, "setFirstName"),
+  setLastName: (value: string) =>
+    set({ lastName: value }, false, "setLastName"),
 });
 
 /* 
@@ -36,8 +40,11 @@ guardar el estado de la persona entre recargas de página
 */
 
 export const usePersonStore = create<PersonState & PersonActions>()(
-  persist(storeApi, {
-    name: "personStorage",
-    storage: firebaseStorage,
-  })
+  persist(
+    devtools(storeApi),
+    {
+      name: "personStorage",
+      storage: firebaseStorage,
+    }
+  )
 );
