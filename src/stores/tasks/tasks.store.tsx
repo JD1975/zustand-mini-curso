@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { Task, TaskStatus } from "../../interfaces";
 import { StateCreator } from "zustand";
+import { devtools } from "zustand/middleware";
 
 interface TaskState {
   // state
@@ -8,6 +9,12 @@ interface TaskState {
 
   // methods
   getTasksByStatus: (status: TaskStatus) => Task[];
+
+  /* Drag and drop */
+  draggingTaskId?: string;
+  setDraggingTaskId: (taskId: string) => void;
+
+  removeDraggingTaskId: () => void;
 }
 
 const storeApi: StateCreator<TaskState> = (set, get) => ({
@@ -36,8 +43,18 @@ const storeApi: StateCreator<TaskState> = (set, get) => ({
     const tasks = get().tasks;
     return Object.values(tasks).filter((task) => task.status === status);
   },
+
+  /* Drag and drop */
+  draggingTaskId: undefined,
+  setDraggingTaskId: (taskId: string) => {
+    set({ draggingTaskId: taskId });
+  },
+
+  removeDraggingTaskId:() => {
+      set({ draggingTaskId: undefined });
+    },
 });
 
 // Es importante importarlo como un hook usando la convención "use"
 // para aplicar correctamente las reglas de los hooks de React
-export const useTasksStore = create<TaskState>()(storeApi);
+export const useTasksStore = create<TaskState>()(devtools(storeApi));
