@@ -1,7 +1,7 @@
 export interface Task {
-  id: number;
+  id: string;
   title: string;
   status: TaskStatus;
 }
 
-export type TaskStatus = "all" | "completed" | "pending";
+export type TaskStatus = "open" | "in-progress" | "done";
