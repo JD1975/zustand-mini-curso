@@ -4,7 +4,9 @@ import {
 } from "react-icons/io5";
 import { TaskStatus, Task } from "../../interfaces";
 import { SingleTasks } from "./SingleTasks";
-import { DragEvent } from "react";
+import { DragEvent, useState } from "react";
+import { useTasksStore } from "../../stores";
+import classNames from "classnames";
 
 interface Props {
   title: string;
@@ -13,25 +15,43 @@ interface Props {
 }
 
 export const JiraTasks = ({ title, value, tasks }: Props) => {
-  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+  const IsDraggingTaskId = useTasksStore((state) => !!state.draggingTaskId);
+  const [onDragOver, setOnDragOver] = useState(false);
+
+  function handleDragOver(e: DragEvent<HTMLDivElement>) {
     e.preventDefault();
+    setOnDragOver(true);
     // console.log("Drag Over:", value);
-  };
+  }
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    setOnDragOver(false);
     // const taskId = e.dataTransfer.getData("text/plain");
     // console.log({ taskId, value });
   };
 
   const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    setOnDragOver(false);
     // console.log("Drag Leave:", value);
   };
 
   return (
     <div
-      className="!text-black relative flex flex-col rounded-[20px]  bg-white bg-clip-border shadow-3xl shadow-shadow-500  w-full !p-4 3xl:p-![18px]"
+      className={classNames(
+        "!text-black relative flex flex-col rounded-[20px] bg-white bg-clip-border shadow-3xl shadow-shadow-500 w-full !p-4 3xl:p-![18px] transition-all duration-300",
+        {
+          // Estilos cuando se está arrastrando una tarea
+          "border-2 border-dashed border-blue-500 bg-blue-50 backdrop-blur-sm rounded-[20px] bg-blue-100/50":
+            IsDraggingTaskId,
+          // Estilo normal
+          "border-2 border-gray-200": !IsDraggingTaskId,
+          // Estilos cuando el drag está sobre este contenedor (hover drop zone)
+          "!border-2 !border-solid !border-green-500 !bg-green-100 scale-105 shadow-2xl ring-4 ring-green-300 ring-opacity-50":
+            IsDraggingTaskId && onDragOver,
+        }
+      )}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       onDragLeave={handleDragLeave}
