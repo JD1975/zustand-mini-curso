@@ -1,7 +1,8 @@
-import { create } from "zustand";
-import { Task, TaskStatus } from "../../interfaces";
-import { StateCreator } from "zustand";
+import { create,  StateCreator} from "zustand";
 import { devtools } from "zustand/middleware";
+import {v4 as uuid } from "uuid";
+
+import { Task, TaskStatus } from "../../interfaces";
 
 interface TaskState {
   // state
@@ -19,6 +20,10 @@ interface TaskState {
   setTaskStatus: (taskId: string, status: TaskStatus) => void;
 
   onTaskDrop: (status: TaskStatus) => void;
+
+    // Add Task
+    addTask: (title:string, status: TaskStatus) => void;
+
 }
 
 const storeApi: StateCreator<TaskState> = (set, get) => ({
@@ -77,6 +82,20 @@ const storeApi: StateCreator<TaskState> = (set, get) => ({
     get().setTaskStatus(taskId, status);
     get().removeDraggingTaskId();
   },
+
+    // Add Task
+    addTask: (title:string, status: TaskStatus) => {
+        const newTask = { id: uuid(), title, status };
+
+        set(state => ({
+            tasks: {
+                ...state.tasks,
+                [newTask.id]: newTask,
+            }
+        }))
+    },
+                
+
 });
 
 // Es importante importarlo como un hook usando la convención "use"
