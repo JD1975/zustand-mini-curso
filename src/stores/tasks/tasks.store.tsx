@@ -1,6 +1,7 @@
-import { create,  StateCreator} from "zustand";
+import { create, StateCreator } from "zustand";
 import { devtools } from "zustand/middleware";
-import {v4 as uuid } from "uuid";
+import { v4 as uuid } from "uuid";
+import { produce } from "immer";
 
 import { Task, TaskStatus } from "../../interfaces";
 
@@ -21,9 +22,8 @@ interface TaskState {
 
   onTaskDrop: (status: TaskStatus) => void;
 
-    // Add Task
-    addTask: (title:string, status: TaskStatus) => void;
-
+  // Add Task
+  addTask: (title: string, status: TaskStatus) => void;
 }
 
 const storeApi: StateCreator<TaskState> = (set, get) => ({
@@ -64,38 +64,54 @@ const storeApi: StateCreator<TaskState> = (set, get) => ({
   },
 
   setTaskStatus: (taskId: string, status: TaskStatus) => {
-    const task = get().tasks[taskId];
-    task.status = status;
+    // * Usando spread operator (Metodo que viene de redux, pero es valido)
+    // ✅ CORRECTO: Crear un nuevo objeto sin mutar el original
+    // set((state) => ({
+    //   tasks: {
+    //     ...state.tasks,
+    //     [taskId]: {
+    //       ...state.tasks[taskId],
+    //       status: status,
+    //     },
+    //   },
+    // }));
 
-    set((state) => ({
-      tasks: {
-        ...state.tasks,
-        [taskId]: task,
-      },
-    }));
+    // * Usando produce (Metodo mas moderno y recomendado)
+    // ✅ Con produce puedes mutar directamente dentro de produce
+    set(
+      produce((state: TaskState) => {
+        state.tasks[taskId].status = status;
+      })
+    );
   },
 
-  onTaskDrop: (status: TaskStatus) =>{
+  onTaskDrop: (status: TaskStatus) => {
     const taskId = get().draggingTaskId;
-    if(!taskId) return;
+    if (!taskId) return;
 
     get().setTaskStatus(taskId, status);
     get().removeDraggingTaskId();
   },
 
-    // Add Task
-    addTask: (title:string, status: TaskStatus) => {
-        const newTask = { id: uuid(), title, status };
+  // Add Task
+  addTask: (title: string, status: TaskStatus) => {
+    const newTask = { id: uuid(), title, status };
 
-        set(state => ({
-            tasks: {
-                ...state.tasks,
-                [newTask.id]: newTask,
-            }
-        }))
-    },
-                
+    // * Usando spread operator (Metodo que viene de redux, pero es valido)
+    // set((state) => ({
+    //   tasks: {
+    //     ...state.tasks,
+    //     [newTask.id]: newTask,
+    //   },
+    // }));
 
+    // * Usando produce (Metodo mas moderno y recomendado
+    set(
+      produce((state: TaskState) => {
+        state.tasks[newTask.id] = newTask;
+      })
+    );
+  },
 });
 
 // Es importante importarlo como un hook usando la convención "use"
