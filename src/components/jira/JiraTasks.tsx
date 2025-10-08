@@ -3,7 +3,8 @@ import {
   IoEllipsisHorizontalOutline,
 } from "react-icons/io5";
 import { TaskStatus, Task } from "../../interfaces";
-import { SingleTasks } from "./singleTasks";
+import { SingleTasks } from "./SingleTasks";
+import { DragEvent } from "react";
 
 interface Props {
   title: string;
@@ -12,8 +13,29 @@ interface Props {
 }
 
 export const JiraTasks = ({ title, value, tasks }: Props) => {
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    // console.log("Drag Over:", value);
+  };
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    // const taskId = e.dataTransfer.getData("text/plain");
+    // console.log({ taskId, value });
+  };
+
+  const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    // console.log("Drag Leave:", value);
+  };
+
   return (
-    <div className="!text-black relative flex flex-col rounded-[20px]  bg-white bg-clip-border shadow-3xl shadow-shadow-500  w-full !p-4 3xl:p-![18px]">
+    <div
+      className="!text-black relative flex flex-col rounded-[20px]  bg-white bg-clip-border shadow-3xl shadow-shadow-500  w-full !p-4 3xl:p-![18px]"
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      onDragLeave={handleDragLeave}
+    >
       {/* Task Header */}
       <div className="relative flex flex-row justify-between">
         <div className="flex items-center justify-center">
