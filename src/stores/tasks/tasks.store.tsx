@@ -2,6 +2,7 @@ import { create, StateCreator } from "zustand";
 import { devtools } from "zustand/middleware";
 import { v4 as uuid } from "uuid";
 import { produce } from "immer";
+// import { immer } from "zustand/middleware/immer";
 
 import { Task, TaskStatus } from "../../interfaces";
 
@@ -28,10 +29,10 @@ interface TaskState {
 
 const storeApi: StateCreator<TaskState> = (set, get) => ({
   tasks: {
-    "A-1": { id: "A-1", title: "Task 1", status: "open" },
-    "A-2": { id: "A-2", title: "Task 2", status: "in-progress" },
-    "A-3": { id: "A-3", title: "Task 3", status: "open" },
-    "A-4": { id: "A-4", title: "Task 4", status: "open" },
+    "A-1": { id: "A-1", title: "Task 1", status: "open" as TaskStatus },
+    "A-2": { id: "A-2", title: "Task 2", status: "in-progress" as TaskStatus },
+    "A-3": { id: "A-3", title: "Task 3", status: "open" as TaskStatus },
+    "A-4": { id: "A-4", title: "Task 4", status: "open" as TaskStatus },
   },
 
   /**
@@ -64,25 +65,25 @@ const storeApi: StateCreator<TaskState> = (set, get) => ({
   },
 
   setTaskStatus: (taskId: string, status: TaskStatus) => {
-    // * Usando spread operator (Metodo que viene de redux, pero es valido)
+    // * Usando spread operator, forma nativa de Zustand
     // ✅ CORRECTO: Crear un nuevo objeto sin mutar el original
-    // set((state) => ({
-    //   tasks: {
-    //     ...state.tasks,
-    //     [taskId]: {
-    //       ...state.tasks[taskId],
-    //       status: status,
-    //     },
-    //   },
-    // }));
+    set((state) => ({
+      tasks: {
+        ...state.tasks,
+        [taskId]: {
+          ...state.tasks[taskId],
+          status: status,
+        },
+      },
+    }));
 
     // * Usando produce (Metodo mas moderno y recomendado)
     // ✅ Con produce puedes mutar directamente dentro de produce
-    set(
-      produce((state: TaskState) => {
-        state.tasks[taskId].status = status;
-      })
-    );
+    // set(
+    //   produce((state: TaskState) => {
+    //     state.tasks[taskId].status = status;
+    //   })
+    // );
   },
 
   onTaskDrop: (status: TaskStatus) => {
@@ -97,7 +98,7 @@ const storeApi: StateCreator<TaskState> = (set, get) => ({
   addTask: (title: string, status: TaskStatus) => {
     const newTask = { id: uuid(), title, status };
 
-    // * Usando spread operator (Metodo que viene de redux, pero es valido)
+    // * Usando spread operator, forma nativa de Zustand
     // set((state) => ({
     //   tasks: {
     //     ...state.tasks,
@@ -111,9 +112,16 @@ const storeApi: StateCreator<TaskState> = (set, get) => ({
         state.tasks[newTask.id] = newTask;
       })
     );
+
+    // * Usando immer middleware de Zustand
+    // Funciona, pero nos produce errores de tipado en TS
+    // set((state) => {
+    //   state.tasks[newTask.id] = newTask;
+    // });
   },
 });
 
 // Es importante importarlo como un hook usando la convención "use"
 // para aplicar correctamente las reglas de los hooks de React
+// export const useTasksStore = create<TaskState>()(devtools(immer(storeApi)));
 export const useTasksStore = create<TaskState>()(devtools(storeApi));
