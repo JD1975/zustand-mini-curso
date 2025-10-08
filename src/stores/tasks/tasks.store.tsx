@@ -15,6 +15,8 @@ interface TaskState {
   setDraggingTaskId: (taskId: string) => void;
 
   removeDraggingTaskId: () => void;
+
+  setTaskStatus: (taskId: string, status: TaskStatus) => void;
 }
 
 const storeApi: StateCreator<TaskState> = (set, get) => ({
@@ -50,9 +52,21 @@ const storeApi: StateCreator<TaskState> = (set, get) => ({
     set({ draggingTaskId: taskId });
   },
 
-  removeDraggingTaskId:() => {
-      set({ draggingTaskId: undefined });
-    },
+  removeDraggingTaskId: () => {
+    set({ draggingTaskId: undefined });
+  },
+
+  setTaskStatus: (taskId: string, status: TaskStatus) => {
+    const task = get().tasks[taskId];
+    task.status = status;
+
+    set((state) => ({
+      tasks: {
+        ...state.tasks,
+        [taskId]: task,
+      },
+    }));
+  },
 });
 
 // Es importante importarlo como un hook usando la convención "use"

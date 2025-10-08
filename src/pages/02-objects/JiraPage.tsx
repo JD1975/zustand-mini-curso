@@ -3,38 +3,32 @@ import { useTasksStore } from "../../stores";
 
 export const JiraPage = () => {
   /**
-   * PASO 1: Obtener la FUNCIÓN del store (no su resultado)
+   * ✅ SOLUCIÓN CORRECTA: Suscribirse al objeto tasks
    *
-   * ❌ INCORRECTO (causa loop infinito):
-   * const tasks = useTasksStore(state => state.getTasksByStatus("open"));
-   * Problema: Llamas getTasksByStatus("open") DENTRO del selector
-   * → Retorna un NUEVO array cada vez
-   * → Zustand compara con Object.is() y detecta cambio constante
-   * → Loop infinito de re-renders
+   * Al seleccionar state.tasks, el componente se SUSCRIBE a cambios en tasks
+   * → Cuando tasks cambia (por setTaskStatus), Zustand detecta el cambio
+   * → El componente se re-renderiza automáticamente
+   * → Filtramos en el componente para obtener arrays actualizados
    *
-   * ✅ CORRECTO (esta línea):
-   * Solo seleccionamos la FUNCIÓN getTasksByStatus (no la llamamos aún)
-   * La función es ESTABLE (siempre es la misma referencia)
-   * → No causa re-renders innecesarios
+   * ❌ Por qué la solución anterior NO funcionaba:
+   * Al seleccionar solo la función getTasksByStatus, el componente NO se suscribía
+   * a ningún cambio del estado → no había re-renders cuando tasks cambiaba
    */
-  const getTasksByStatus = useTasksStore((state) => state.getTasksByStatus);
+  const tasks = useTasksStore((state) => state.tasks);
 
   /**
-   * PASO 2: Llamar la función FUERA del selector
-   *
-   * Ahora sí llamamos getTasksByStatus con diferentes parámetros
-   * Esto ocurre en el cuerpo del componente, NO en el selector de Zustand
-   *
-   * ¿Por qué funciona?
-   * - La función getTasksByStatus accede al store internamente con get()
-   * - Filtra las tasks según el status que le pasemos
-   * - Retorna un nuevo array, pero eso está bien porque ya estamos
-   *   fuera del selector de Zustand
-   * - El componente se re-renderiza solo cuando las tasks realmente cambian
+   * Filtrar las tareas por status directamente en el componente
+   * Esto se ejecuta en cada render, pero solo cuando 'tasks' realmente cambia
    */
-  const pendingTasks = getTasksByStatus("open");
-  const inProgressTaks = getTasksByStatus("in-progress");
-  const doneTasks = getTasksByStatus("done");
+  const pendingTasks = Object.values(tasks).filter(
+    (task) => task.status === "open"
+  );
+  const inProgressTaks = Object.values(tasks).filter(
+    (task) => task.status === "in-progress"
+  );
+  const doneTasks = Object.values(tasks).filter(
+    (task) => task.status === "done"
+  );
 
   console.log(pendingTasks, inProgressTaks, doneTasks);
 
@@ -45,9 +39,13 @@ export const JiraPage = () => {
       <hr />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <JiraTasks title="Pendientes" tasks={pendingTasks} value="done" />
+        <JiraTasks title="Pendientes" tasks={pendingTasks} value="open" />
 
-        <JiraTasks title="Avanzando" tasks={inProgressTaks} value="in-progress" />
+        <JiraTasks
+          title="Avanzando"
+          tasks={inProgressTaks}
+          value="in-progress"
+        />
 
         <JiraTasks title="Terminadas" tasks={doneTasks} value="done" />
       </div>
