@@ -1,5 +1,5 @@
 import { create, StateCreator } from "zustand";
-import { devtools } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 import { v4 as uuid } from "uuid";
 import { produce } from "immer";
 // import { immer } from "zustand/middleware/immer";
@@ -27,7 +27,10 @@ interface TaskState {
   addTask: (title: string, status: TaskStatus) => void;
 }
 
-const storeApi: StateCreator<TaskState> = (set, get) => ({
+const storeApi: StateCreator<TaskState, [["zustand/devtools", never]]> = (
+  set,
+  get
+) => ({
   tasks: {
     "A-1": { id: "A-1", title: "Task 1", status: "open" as TaskStatus },
     "A-2": { id: "A-2", title: "Task 2", status: "in-progress" as TaskStatus },
@@ -119,9 +122,18 @@ const storeApi: StateCreator<TaskState> = (set, get) => ({
     //   state.tasks[newTask.id] = newTask;
     // });
   },
+
+  // Total Tasks
+  getTotalTasks: () => {
+    return Object.values(get().tasks).length;
+  },
 });
 
 // Es importante importarlo como un hook usando la convención "use"
 // para aplicar correctamente las reglas de los hooks de React
 // export const useTasksStore = create<TaskState>()(devtools(immer(storeApi)));
-export const useTasksStore = create<TaskState>()(devtools(storeApi));
+export const useTasksStore = create<TaskState>()(
+  persist(devtools(storeApi), {
+    name: "tasks-storage",
+  })
+);
