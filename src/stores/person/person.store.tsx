@@ -11,6 +11,8 @@ interface PersonState {
 interface PersonActions {
   setFirstName: (firstName: string) => void;
   setLastName: (lastName: string) => void;
+
+  getFullName: () => string;
 }
 
 /* 
@@ -22,7 +24,7 @@ Esto mejora la legibilidad y el mantenimiento del código
 const storeApi: StateCreator<
   PersonActions & PersonState,
   [["zustand/devtools", never]]
-> = (set) => ({
+> = (set, get) => ({
   firstName: "",
   lastName: "",
 
@@ -30,6 +32,10 @@ const storeApi: StateCreator<
     set({ firstName: value }, false, "setFirstName"),
   setLastName: (value: string) =>
     set({ lastName: value }, false, "setLastName"),
+
+  getFullName: () => {
+    return `${get().firstName} ${get().lastName}`;
+  }
 });
 
 /* 
@@ -40,11 +46,8 @@ guardar el estado de la persona entre recargas de página
 */
 
 export const usePersonStore = create<PersonState & PersonActions>()(
-  persist(
-    devtools(storeApi),
-    {
-      name: "personStorage",
-      storage: firebaseStorage,
-    }
-  )
+  persist(devtools(storeApi), {
+    name: "personStorage",
+    storage: firebaseStorage,
+  })
 );

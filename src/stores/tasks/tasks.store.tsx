@@ -25,6 +25,8 @@ interface TaskState {
 
   // Add Task
   addTask: (title: string, status: TaskStatus) => void;
+
+  getTotalTasks: () => number;
 }
 
 const storeApi: StateCreator<TaskState, [["zustand/devtools", never]]> = (

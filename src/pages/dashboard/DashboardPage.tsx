@@ -8,7 +8,7 @@ export const Dashboard = () => {
 
   const totalBears = useBearStore(state => state.totalBears);
   const totalTasks = useTasksStore(state => state.getTotalTasks());
-// const totalPersons = usePersonStore(state => state.getTotalPersons);
+  const fullName = usePersonStore(state => state.getFullName());
 
   return (
     <>
@@ -28,7 +28,7 @@ export const Dashboard = () => {
         <WhiteCard centered>
           <IoAccessibilityOutline size={ 50 } className="text-indigo-600" />
           <h2>Persona</h2>
-          <p>Información</p>
+          <p>{fullName}</p>
         </WhiteCard>
 
 
