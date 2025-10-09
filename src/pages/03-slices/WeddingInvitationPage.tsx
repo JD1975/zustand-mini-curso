@@ -16,6 +16,9 @@ export const WeddingInvitationPage = () => {
   const setEventDate = useWeddingBoundStore((state) => state.setEventDate);
   const setEventTime = useWeddingBoundStore((state) => state.setEventTime);
 
+  const isConfirmed = useWeddingBoundStore((state) => state.isConfirmed);
+  const setIsConfirm = useWeddingBoundStore((state) => state.setIsConfirm);
+
   return (
     <>
       <h1>Invitación de Boda</h1>
@@ -118,6 +121,8 @@ export const WeddingInvitationPage = () => {
                     type="radio"
                     name="isComing"
                     id="radioButton1"
+                    checked={ isConfirmed }
+                    onChange={ () => setIsConfirm( true ) }
                     className="h-5 w-5"
                   />
                   <label className="pl-3 text-base font-medium text-[#07074D]">
@@ -130,6 +135,8 @@ export const WeddingInvitationPage = () => {
                     type="radio"
                     name="isComing"
                     id="radioButton2"
+                    checked={ !isConfirmed }
+                    onChange={ () => setIsConfirm( false ) }
                     className="h-5 w-5"
                   />
                   <label className="pl-3 text-base font-medium text-[#07074D]">
