@@ -11,9 +11,9 @@ export interface LoginResponse {
 }
 
 export class AuthService {
-  static login = async (email: string, password: string) => {
+  static login = async (email: string, password: string):Promise<LoginResponse> => {
     try {
-      const data = await tesloApi.post<LoginResponse>("/auth/login", {
+      const {data} = await tesloApi.post<LoginResponse>("/auth/login", {
         email,
         password,
       });
@@ -21,8 +21,9 @@ export class AuthService {
     } catch (error) {
       if (error instanceof AxiosError) {
         console.log(error.response?.data);
-        throw new Error(error.response?.data.message || "Login failed");
+        throw new Error(error.response?.data);
       }
+      throw new Error("Error al iniciar sesión");
     }
   };
 }

@@ -1,20 +1,25 @@
 import { FormEvent } from 'react';
+import { useAuthStore } from '../../stores';
 
 export const LoginPage = () => {
 
+  const loginUser = useAuthStore((state) => state.loginUser);
+
   const onSubmit = (event: FormEvent<HTMLFormElement> ) => {
     event.preventDefault();
-    // const { username, password, remember } = event.target as HTMLFormElement;
-    const { username, password,remember } = event.target as typeof event.target & {
-      username: { value: string };
+    // const { emaiñ, password, remember } = event.target as HTMLFormElement;
+    const { email, password,remember } = event.target as typeof event.target & {
+      email: { value: string };
       password: { value: string };
       remember: { checked: boolean }
     };
-    console.log(username.value, password.value, remember.checked);
+    console.log( remember.checked);
 
-    username.value = '';
-    password.value = '';
-    remember.checked = false;
+    loginUser(email.value, password.value);
+
+    // email.value = '';
+    // password.value = '';
+    // remember.checked = false;
   }
 
 
@@ -25,17 +30,17 @@ export const LoginPage = () => {
       <form onSubmit={ onSubmit }>
 
         <div className="mb-4">
-          <label className="block text-gray-600">Username</label>
-          <input type="text" name="username" autoComplete="off" />
+          <label className="block text-gray-600">Email</label>
+          <input type="text" name="email" autoComplete="off" placeholder='' title='email'/>
         </div>
 
         <div className="mb-4">
           <label className="block text-gray-600">Password</label>
-          <input type="password" name="password" autoComplete="off" />
+          <input type="password" name="password" autoComplete="off" placeholder='' title='Password'/>
         </div>
 
         <div className="mb-4 flex items-center">
-          <input type="checkbox" name="remember" className="text-blue-500" />
+          <input type="checkbox" name="remember" className="text-blue-500" title='Check Renemeber Me' />
           <label className="text-gray-600 ml-2">Remember Me</label>
         </div>
         
