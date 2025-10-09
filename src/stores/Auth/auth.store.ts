@@ -9,10 +9,12 @@ export interface AuthState {
   user?: User;
 
   loginUser: (email: string, password: string) => Promise<void>;
+
+  checkAuthStatus: () => Promise<void>;
 }
 
-const storeApi: StateCreator<AuthState> = (set) => ({
-  status: "UnAuthorized", // 'Pending', 'Authorized', 'UnAuthorized'
+const storeApi: StateCreator<AuthState> = (set, get) => ({
+  status: "Pending", // 'Pending', 'Authorized', 'UnAuthorized'
   token: undefined,
   user: undefined,
 
@@ -23,12 +25,27 @@ const storeApi: StateCreator<AuthState> = (set) => ({
       console.log({ token, ...user });
     } catch (error) {
       set({ status: "UnAuthorized", token: undefined, user: undefined });
+      throw "UnAthorized";
+    }
+  },
+
+  checkAuthStatus: async () => {
+    try {
+      const token = get().token;
+      if (!token) {
+        // No hay token en el store: no es posible validar
+        set({ status: "UnAuthorized", token: undefined, user: undefined });
+        return;
+      }
+
+      const { token: newToken, ...user } = await AuthService.checkStatus(token);
+      set({ status: "Authorized", token: newToken, user });
+    } catch (error) {
+      set({ status: "UnAuthorized", token: undefined, user: undefined });
     }
   },
 });
 
 export const useAuthStore = create<AuthState>()(
-  devtools(
-    persist(storeApi, { name: "auth-storage" })
-  )
+  devtools(persist(storeApi, { name: "auth-storage" }))
 );
