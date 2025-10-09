@@ -1,10 +1,7 @@
-import { WhiteCard } from '../../components';
-import { useWeddingBoundStore } from '../../stores/';
-
-
+import { WhiteCard } from "../../components";
+import { useWeddingBoundStore } from "../../stores/";
 
 export const WeddingInvitationPage = () => {
-
   const firstName = useWeddingBoundStore((state) => state.firstName);
   const lastName = useWeddingBoundStore((state) => state.lastName);
 
@@ -12,7 +9,12 @@ export const WeddingInvitationPage = () => {
   const setLastName = useWeddingBoundStore((state) => state.setLastName);
 
   const guestCount = useWeddingBoundStore((state) => state.guestCount);
-  const setGuestCount = useWeddingBoundStore((state) => state.setGuestCount); 
+  const setGuestCount = useWeddingBoundStore((state) => state.setGuestCount);
+
+  const eventYYMMDD = useWeddingBoundStore((state) => state.eventYYMMDD());
+  const eventHHMM = useWeddingBoundStore((state) => state.eventHHMM());
+  const setEventDate = useWeddingBoundStore((state) => state.setEventDate);
+  const setEventTime = useWeddingBoundStore((state) => state.setEventTime);
 
   return (
     <>
@@ -26,9 +28,7 @@ export const WeddingInvitationPage = () => {
             <div className="-mx-3 flex flex-wrap">
               <div className="w-full px-3 sm:w-1/2">
                 <div className="mb-5">
-                  <label
-                    className="mb-3 block text-base font-medium text-[#07074D]"
-                  >
+                  <label className="mb-3 block text-base font-medium text-[#07074D]">
                     Primer Nombre
                   </label>
                   <input
@@ -43,9 +43,7 @@ export const WeddingInvitationPage = () => {
               </div>
               <div className="w-full px-3 sm:w-1/2">
                 <div className="mb-5">
-                  <label
-                    className="mb-3 block text-base font-medium text-[#07074D]"
-                  >
+                  <label className="mb-3 block text-base font-medium text-[#07074D]">
                     Apellido
                   </label>
                   <input
@@ -60,9 +58,7 @@ export const WeddingInvitationPage = () => {
               </div>
             </div>
             <div className="mb-5">
-              <label
-                className="mb-3 block text-base font-medium text-[#07074D]"
-              >
+              <label className="mb-3 block text-base font-medium text-[#07074D]">
                 ¿Cuántos invitados traerá?
               </label>
               <input
@@ -80,29 +76,32 @@ export const WeddingInvitationPage = () => {
             <div className="-mx-3 flex flex-wrap">
               <div className="w-full px-3 sm:w-1/2">
                 <div className="mb-5">
-                  <label
-                    className="mb-3 block text-base font-medium text-[#07074D]"
-                  >
+                  <label className="mb-3 block text-base font-medium text-[#07074D]">
                     Fecha de evento
                   </label>
-                  <input
-                    type="date"
-                    name="eventDate"
-                    id="eventDate"
-                  />
+                  <input 
+                  title="Fecha del evento"
+                    type="date" 
+                    name="eventDate" 
+                    id="eventDate" 
+                    value={eventYYMMDD}
+                    onChange={ e => setEventDate(e.target.value)}
+                    />
                 </div>
               </div>
+
               <div className="w-full px-3 sm:w-1/2">
                 <div className="mb-5">
-                  <label
-                    className="mb-3 block text-base font-medium text-[#07074D]"
-                  >
+                  <label className="mb-3 block text-base font-medium text-[#07074D]">
                     Hora del evento
                   </label>
-                  <input
-                    type="time"
-                    name="eventTime"
-                    id="eventTime"
+                  <input 
+                    title="Hora del evento"
+                    type="time" 
+                    name="eventTime" 
+                    id="eventTime" 
+                    value={eventHHMM}
+                    onChange={ e => setEventTime(e.target.value)}
                   />
                 </div>
               </div>
@@ -115,27 +114,25 @@ export const WeddingInvitationPage = () => {
               <div className="flex items-center space-x-6">
                 <div className="flex items-center">
                   <input
+                  title="Asistiré"
                     type="radio"
                     name="isComing"
                     id="radioButton1"
                     className="h-5 w-5"
                   />
-                  <label
-                    className="pl-3 text-base font-medium text-[#07074D]"
-                  >
+                  <label className="pl-3 text-base font-medium text-[#07074D]">
                     Si
                   </label>
                 </div>
                 <div className="flex items-center">
                   <input
+                  title="No asistiré"
                     type="radio"
                     name="isComing"
                     id="radioButton2"
                     className="h-5 w-5"
                   />
-                  <label
-                    className="pl-3 text-base font-medium text-[#07074D]"
-                  >
+                  <label className="pl-3 text-base font-medium text-[#07074D]">
                     No
                   </label>
                 </div>
@@ -143,9 +140,7 @@ export const WeddingInvitationPage = () => {
             </div>
 
             <div>
-              <button>
-                Enviar
-              </button>
+              <button>Enviar</button>
             </div>
           </form>
         </div>

@@ -1,9 +1,11 @@
 import { create } from "zustand";
-import { createPersonSlice, PersonSlice } from "./person.slice";
-import { createGuestSlice, GuestSlice } from "./guest.slice";
 import { devtools } from "zustand/middleware";
 
-type ShareState = PersonSlice & GuestSlice;
+import { createPersonSlice, PersonSlice } from "./person.slice";
+import { createGuestSlice, GuestSlice } from "./guest.slice";
+import { createDateSlice, DateSlice } from "./date.slice";
+
+type ShareState = PersonSlice & GuestSlice & DateSlice;
 
 export const useWeddingBoundStore = create<ShareState>()(
   // (...a) captura todos los parámetros (set, get, storeApi) que Zustand pasa automáticamente.
@@ -14,5 +16,6 @@ export const useWeddingBoundStore = create<ShareState>()(
   devtools((...a) => ({
     ...createPersonSlice(...a),
     ...createGuestSlice(...a),
+    ...createDateSlice(...a),
   }))
 );
