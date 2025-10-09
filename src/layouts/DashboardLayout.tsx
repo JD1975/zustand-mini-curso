@@ -13,7 +13,7 @@ export const DashboardLayout = () => {
   }
 
   if (authStatus === "UnAuthorized") {
-    return Navigate({ to: "/auth/login" });
+    return <  Navigate to="/auth/login" /> ;
   }
 
   return (
