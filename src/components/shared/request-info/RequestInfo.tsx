@@ -7,13 +7,13 @@ export const RequestInfo = () => {
   useEffect(() => {
     tesloApi
       .get("/auth/private")
-      .then((resp) => setInfo(resp.data))
-      .catch((err) => setInfo(err.message));
+      .then(resp => setInfo(resp.data))
+      .catch(() => setInfo("Error"));
   }, []);
 
   return (
     <>
-      <h2>Informacion</h2>
+      <h4>Informacion</h4>
       <pre>{JSON.stringify(info, null, 2)}</pre>
     </>
   );

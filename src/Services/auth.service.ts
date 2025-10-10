@@ -34,23 +34,16 @@ export class AuthService {
   };
 
   // * Metodo para validar token/Status
-  static checkStatus = async (token: string):Promise<LoginResponse> => {
-    try {
-
-      const {data} = await tesloApi.get<LoginResponse>("/auth/check-status", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return data;
-
-    }catch (error) {
-      throw new Error("Unathorized");
-
+  static checkAuthStatus = async (): Promise<LoginResponse> => {
+      try {
+          const {data} = await tesloApi.get<LoginResponse>("auth/check-status");
+  
+          return data;
+      } catch (error) {
+          throw new Error('Unauthorized');
+      }
     }
-
+  
 
 
   }
-
-}
